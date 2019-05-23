@@ -1,0 +1,48 @@
+# procore.yaml
+description: Description of this stuff
+infrastructure:
+  services:
+    - web
+    - utility
+    - sidekiq
+    - push_notifications
+    - inbound
+    - release
+    - se
+  datastores:
+    - postgres
+    - redis
+    - memcached
+    - elasticsearch
+  connections:
+    - from: web
+      to: postgres
+      port: 5432
+    - from: sidekiq
+      to: postgres
+      port: 5432
+    - from: utility
+      to: postgres
+      port: 5432
+
+monitoring: test
+
+
+scaling:
+  web: load
+  sidekiq: queue_depth
+  resque: queue_depth
+  inbound: load
+
+deployment:
+  commands:
+    pre-restart:
+      - command: bundle exec rake handcuffs:migrate[pre_restart]
+        service: web
+
+      - command: bundle exec rake assets:precompile
+        service: release
+
+    post-restart:
+      - command: bundle exec rake handcuffs:migrate[post_restart]
+        service: web
