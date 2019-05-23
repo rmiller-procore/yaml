@@ -1,15 +1,9 @@
-# procore.yaml
-description: Description of this stuff
-infrastructure:
-  services:
-    - web
-  datastores:
-    - postgres
-    - redis
-  connections:
-    - from: web
-      to: postgres
-      port: 5432
-    - from: web
-      to: redis
-      port: 6379
+# infrastrucutre.yaml
+services:
+  web
+datastores:
+  postgres
+  redis
+connections:
+  web_to_postgres
+  web_to_redis

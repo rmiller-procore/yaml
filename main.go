@@ -14,48 +14,43 @@ import (
 	"log"
 )
 
-type ProcoreSpec struct {
-	Description    string             `yaml:description`
-	Infrastructure InfrastructureSpec `yaml:infrastructure`
-	//Monitoring MonitoringSpec `yaml:monitoring`
-	//Scaling ScalingSpec `yaml:scaling`
-	//Deployment DeploymentSpec `yaml:deployment`
-}
-
-type InfrastructureSpec struct {
-	Services    []ServiceSpec    `yaml:services`
-	Datastores  []DatastoreSpec  `yaml:datastores`
-	Connections []ConnectionSpec `yaml:connections`
-}
-
-type ServiceSpec struct {
-	Services []string `yaml:services`
-}
-
-type DatastoreSpec struct {
-	Datastores []string `yaml:datastores`
-}
-
-type Connection struct {
-	From string `yaml:from`
-	To   string `yaml:to`
-	Port int    `yaml:port`
-}
-
-type ConnectionSpec struct {
-	Connections []Connection `yaml:connections`
-}
-
-//struct MonitoringSpec {
-//	Monitors string `yaml:monitoring`
-//}
-
-//struct ScalingSpec {
-//	Web
-//}
 func main() {
-	p := make(map[interface{}]interface{})
-	y, err := ioutil.ReadFile("p.yml")
+	services := parseYaml("services.yml")
+
+	//fmt.Println(services)
+	for i, s := range services {
+		fmt.Println(s, "at", i)
+		switch i {
+		case "web":
+			fmt.Println("Create Web Service")
+			createWebNode()
+		default:
+			fmt.Println("Unknown Service type to deploy")
+		}
+	}
+	//fmt.Println("=========")
+	datastores := parseYaml("datastores.yml")
+	//fmt.Println(datastores)
+	for i, d := range datastores {
+		fmt.Println(d, "at", i)
+		switch i {
+		case "redis":
+			fmt.Println("Create Redis Service")
+			createRedisService()
+		default:
+			fmt.Println("Unknown data store type")
+		}
+	}
+	//fmt.Println("=========")
+	//connections := parseYaml("connections.yml")
+	//fmt.Println(connections)
+
+	//fmt.Println("=========")
+}
+
+func parseYaml(fileName string) map[string]string {
+	p := make(map[string]string)
+	y, err := ioutil.ReadFile(fileName)
 	if err != nil {
 		log.Fatalf("Unable to read input file: \n%v\n", err)
 	}
@@ -63,46 +58,5 @@ func main() {
 	if err2 != nil {
 		log.Fatalf("Error 2: Unable to Unmarshal YAML file file:\n%v\n", err2)
 	}
-	for key, value := range p {
-		fmt.Println("Key:", key, "Value:", value)
-	}
-
-	infra_value := p["infrastructure"]
-	services := infra_value.(map[interface{}]interface{})["services"]
-	fmt.Println(services)
-	fmt.Println("=========")
-	datastores := infra_value.(map[interface{}]interface{})["datastores"]
-	fmt.Println(datastores)
-	fmt.Println("=========")
-	connections := infra_value.(map[interface{}]interface{})["connections"]
-	fmt.Println(connections)
-	fmt.Println("=========")
+	return p
 }
-
-/*
-func parseMap(aMap map[interface{}]interface{}) {
-	for key, val := range aMap {
-		switch concreteVal := val.(type) {
-		case map[interface{}]interface{}:
-			parseMap(val.(map[interface{}]interface{}))
-		case []interface{}:
-			parseArray(val.([]interface{}))
-		default:
-			fmt.Println(key, ":", concreteVal)
-		}
-	}
-}
-
-func parseArray(anArray []interface{}) {
-	for i, val := range anArray {
-		switch concreteVal := val.(type) {
-		case map[interface{}]interface{}:
-			parseMap(val.(map[interface{}]interface{}))
-		case []interface{}:
-			parseArray(val.([]interface{}))
-		default:
-			fmt.Println(i, ":", concreteVal)
-		}
-	}
-}
-*/
