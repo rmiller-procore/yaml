@@ -65,6 +65,14 @@ Investigative Outcomes
     use it for our needs.
 
 
+Additional Efforts
+------------------
+One follow-on experiment was to better understand the data strcuture generated
+by the GoYAML library when it slurps up a YAML file. I put a small effort
+to flesh out this data structure, and was able to put together a first
+run at parsing the `procore.yml` file's "interesting" sections from the 
+perspective of CloudFormation.
+
 Conclusions
 -----------
 CloudFormation seems like it could be a path forward for us. Especially, if we
@@ -83,3 +91,10 @@ In general, there is an assumed learning curve, since some will be learning
 both CloudFormation and Go coding constructs along the way. The steepness of the
 curve will likely vary with the individuals exposure to programing language
 and data structures in Go.
+
+
+Next Steps
+==========
+Planning session - Initial steps forward should include a planning session to
+design the system to be built. This will allow designation of the parallelism
+and separation of work efforts.
